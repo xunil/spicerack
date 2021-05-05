@@ -1,6 +1,6 @@
 $fn = 32;
 
-jars_deep = 6;
+jars_deep = 7;
 jars_wide = 6;
 
 jar_dia = 1.85;
@@ -14,6 +14,22 @@ wall_spacing = jar_dia + plastic_thickness;
 
 side_height = 1.375;
 
+*projection()
+    translate([0,0,plastic_thickness])
+        rotate([270,0,0]) 
+            latitude_panel(jars_deep, endcap=true);
+
+*projection()
+    translate([0,0,plastic_thickness])
+        rotate([270,0,0]) 
+            latitude_panel(jars_deep, endcap=false);
+
+*projection()
+  translate([0,0,plastic_thickness])
+    rotate([0,270,270]) 
+        longitude_panel(jars_deep);
+
+
 color("red") {
     longitude_panel(jars_deep);
     translate([wall_spacing * jars_wide, 0, 0]) longitude_panel(jars_deep);
@@ -26,7 +42,7 @@ color("green") {
     translate([0, wall_spacing * jars_deep, 0]) latitude_panel(jars_wide, endcap=true);
 }
 
-!color("blue") {
+color("blue") {
     for (i = [1:jars_wide-1]) {
         rotate([0, 180, -90])
             translate([0, wall_spacing*i, -side_height]) 
@@ -34,7 +50,7 @@ color("green") {
     }
 }
 
-*color("grey") {
+color("grey") {
     for(i=[0:jars_deep-1]) {
         for(j=[0:jars_wide-1]) {
             translate([
@@ -66,17 +82,16 @@ module longitude_panel(num_jars) {
 }
 
 module latitude_panel(num_jars, endcap=false) {
-    latitude_width = num_jars * jar_dia + (plastic_thickness * (jars_wide - 1)) + (plastic_thickness * 2);
+    latitude_width = (num_jars * jar_dia) + (plastic_thickness * (num_jars-1));
     difference() {
-        cube([latitude_width, plastic_thickness, side_height]);
-        translate([-plastic_thickness, -plastic_thickness, (side_height/4)*3])
-            cube([plastic_thickness*2, plastic_thickness*3, (side_height/2)]);
-        translate([-plastic_thickness, -plastic_thickness, -(side_height/4)])
-            cube([plastic_thickness*2, plastic_thickness*3, (side_height/2)]);
-        translate([wall_spacing * num_jars, -plastic_thickness, (side_height/4)*3])
-            cube([plastic_thickness*2, plastic_thickness*3, (side_height/2)]);
-        translate([wall_spacing * num_jars, -plastic_thickness, -(side_height/4)])
-            cube([plastic_thickness*2, plastic_thickness*3, (side_height/2)]);
+        union() {
+            translate([plastic_thickness, 0, 0]) 
+                cube([latitude_width, plastic_thickness, side_height]);
+            translate([0, 0, (side_height/4)])
+                cube([plastic_thickness, plastic_thickness, side_height/2]);
+            translate([latitude_width+plastic_thickness, 0, (side_height/4)])
+                cube([plastic_thickness, plastic_thickness, side_height/2]);
+        }
         
         for(i = [1:num_jars-1]) {
             translate([wall_spacing*i, -plastic_thickness, (endcap ? side_height / 4 : side_height / 2)])
@@ -84,6 +99,7 @@ module latitude_panel(num_jars, endcap=false) {
         }
     }
 }
+
 
 module spice_jar() {
     cylinder(h=jar_height, d=jar_dia, center=false);
