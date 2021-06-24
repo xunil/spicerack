@@ -4,13 +4,14 @@ jars_deep = 7;
 jars_wide = 6;
 
 jar_dia = 1.85;
+jar_clearance = 0.035;
+jar_clearance_dia = jar_dia + jar_clearance;
 jar_height = 4.135;
-jar_clearance = 0.020;
 jar_lid_dia = 1.96;
 jar_lid_height = 0.485;
-plastic_thickness = 0.197;
+plastic_thickness = 0.177;
 
-wall_spacing = jar_dia + plastic_thickness;
+wall_spacing = jar_clearance_dia + plastic_thickness;
 
 side_height = 1.375;
 
@@ -54,8 +55,8 @@ color("grey") {
     for(i=[0:jars_deep-1]) {
         for(j=[0:jars_wide-1]) {
             translate([
-                (jar_dia/2)+(jar_dia*j)+(plastic_thickness*(j+1)),
-                (jar_dia/2)+(jar_dia*i)+(plastic_thickness*(i+1)),
+                (jar_clearance_dia/2)+(jar_clearance_dia*j)+(plastic_thickness*(j+1)),
+                (jar_clearance_dia/2)+(jar_clearance_dia*i)+(plastic_thickness*(i+1)),
                 0
             ]) spice_jar();
         }
@@ -63,7 +64,7 @@ color("grey") {
 }
 
 module longitude_panel(num_jars) {
-    longitude_depth = num_jars * jar_dia + (plastic_thickness * (jars_deep - 1)) + (plastic_thickness * 2);
+    longitude_depth = num_jars * jar_clearance_dia + (plastic_thickness * (jars_deep - 1)) + (plastic_thickness * 2);
     difference() {
         cube([plastic_thickness, longitude_depth, side_height]);
         translate([-plastic_thickness, -plastic_thickness, (side_height/4)]) {
@@ -82,7 +83,7 @@ module longitude_panel(num_jars) {
 }
 
 module latitude_panel(num_jars, endcap=false) {
-    latitude_width = (num_jars * jar_dia) + (plastic_thickness * (num_jars-1));
+    latitude_width = (num_jars * jar_clearance_dia) + (plastic_thickness * (num_jars-1));
     difference() {
         union() {
             translate([plastic_thickness, 0, 0]) 
