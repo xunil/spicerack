@@ -15,20 +15,30 @@ wall_spacing = jar_clearance_dia + plastic_thickness;
 
 side_height = 1.375;
 
-*projection()
-    translate([0,0,plastic_thickness])
+// TODO: Make the for loops programmatic based on the jars deep/wide numbers
+!projection() {
+  // green (2)
+  for(i = [0:1]) {
+    translate([0,side_height*(1.025*i),plastic_thickness])
         rotate([270,0,0]) 
             latitude_panel(jars_deep, endcap=true);
+  }
 
-*projection()
-    translate([0,0,plastic_thickness])
-        rotate([270,0,0]) 
-            latitude_panel(jars_deep, endcap=false);
 
-*projection()
-  translate([0,0,plastic_thickness])
-    rotate([0,270,270]) 
-        longitude_panel(jars_deep);
+  // red (2)
+    for(i = [2:3]) {
+      translate([0,side_height*(1.025*i),plastic_thickness])
+        rotate([0,270,270]) 
+            longitude_panel(jars_deep);
+    }
+
+// blue (11)
+    for (i = [4:15]) {
+        translate([0,side_height*(1.025*i),plastic_thickness])
+            rotate([270,0,0]) 
+                latitude_panel(jars_deep, endcap=false);
+    }
+}
 
 
 color("red") {
@@ -37,9 +47,6 @@ color("red") {
 }
 color("green") {
     latitude_panel(jars_wide, endcap=true);
-    for (i = [1:jars_deep-1]) {
-        translate([0, wall_spacing * i, 0]) latitude_panel(jars_wide);
-    }
     translate([0, wall_spacing * jars_deep, 0]) latitude_panel(jars_wide, endcap=true);
 }
 
@@ -49,9 +56,12 @@ color("blue") {
             translate([0, wall_spacing*i, -side_height]) 
                 latitude_panel(jars_deep, endcap=false);
     }
+    for (i = [1:jars_deep-1]) {
+        translate([0, wall_spacing * i, 0]) latitude_panel(jars_wide);
+    }
 }
 
-color("grey") {
+*color("grey") {
     for(i=[0:jars_deep-1]) {
         for(j=[0:jars_wide-1]) {
             translate([
